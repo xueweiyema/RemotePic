@@ -30,6 +30,7 @@ public class PhotoHandler implements PictureCallback {
 		// SimpleDateFormat dateFormat = new SimpleDateFormat("yyyymmddhhmmss");
 		// String date = dateFormat.format(new Date());
 		// String photoFile = "Picture_" + date + ".jpg";
+		
 		String photoFile = "zhbb.jpg";
 		String filename = pictureFileDir.getPath() + File.separator + photoFile;
 

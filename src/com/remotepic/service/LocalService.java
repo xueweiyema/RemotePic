@@ -17,6 +17,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.util.EntityUtils;
 
+import com.remotepic.CameraActivity;
 import com.remotepic.MainActivity;
 import com.remotepic.PhotoHandler;
 import com.remotepic.R;
@@ -61,14 +62,6 @@ public class LocalService extends Service {
 		}
 	}
 
-	// 释放设备电源锁
-	private void releaseWakeLock() {
-		if (null != wakeLock) {
-			wakeLock.release();
-			wakeLock = null;
-		}
-	}
-
 	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
@@ -101,14 +94,12 @@ public class LocalService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.i("LocalService", "Received start id " + startId + ": " + intent);
-
 		return START_STICKY;
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		releaseWakeLock();
 		Log.d("Destroy==>", "onDestroy() executed");
 		mNM.cancel(NOTIFICATION);
 
@@ -149,7 +140,6 @@ public class LocalService extends Service {
 		intent.setAction("com.vegetables_source.alarm");
 		PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, 0);
 		am.cancel(pi);
-
 		// 注销广播
 		unregisterReceiver(alarmReceiver);
 	}
@@ -161,49 +151,40 @@ public class LocalService extends Service {
 			SimpleDateFormat format = new SimpleDateFormat("HH", Locale.CHINA);
 			String realTime = format.format(new java.util.Date());
 			Log.i("realTime=", realTime);
-			if (Integer.parseInt(realTime) > 12 && Integer.parseInt(realTime) < 21) {
-				closeCamera();
-				camera = openFacingBackCamera();
-				if ("com.vegetables_source.alarm".equals(intent.getAction())) {
 
-					if (camera != null) {
-						SurfaceView dummy = new SurfaceView(getBaseContext());
-						try {
-							camera.setPreviewDisplay(dummy.getHolder());
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+			Intent i = new Intent(LocalService.this, CameraActivity.class);
+			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(i);
 
-						final Camera.Parameters parameters = camera.getParameters();
-						parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-						camera.setParameters(parameters);
-						camera.startPreview();
-						// camera.takePicture(null, null, new
-						// PhotoHandler(getApplicationContext()));
-						camera.autoFocus(new AutoFocusCallback() {
-							@Override
-							public void onAutoFocus(boolean success, Camera camera) {
-								// 从Camera捕获图片
-								camera.takePicture(null, null, new PhotoHandler(getApplicationContext()));
-								// 上传图片
-								new Thread(new Runnable() {
-									@Override
-									public void run() {
-										try {
-											upLoadByHttpClient4();
-										} catch (ClientProtocolException e) {
-											e.printStackTrace();
-										} catch (IOException e) {
-											e.printStackTrace();
-										}
-									}
-								}).start();
-							}
-						});
-					}
-
-				}
-			}
+			/*
+			 * if (Integer.parseInt(realTime) > 1 && Integer.parseInt(realTime)
+			 * < 22) { closeCamera(); camera = openFacingBackCamera();
+			 * Log.i("LocalService", "camera openning"); if
+			 * ("com.vegetables_source.alarm".equals(intent.getAction())) {
+			 * 
+			 * if (camera != null) { SurfaceView dummy = new
+			 * SurfaceView(getBaseContext()); try {
+			 * camera.setPreviewDisplay(dummy.getHolder()); } catch (IOException
+			 * e) { e.printStackTrace(); }
+			 * 
+			 * final Camera.Parameters parameters = camera.getParameters();
+			 * parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+			 * camera.setParameters(parameters); camera.startPreview(); //
+			 * camera.takePicture(null, null, new //
+			 * PhotoHandler(getApplicationContext())); camera.autoFocus(new
+			 * AutoFocusCallback() {
+			 * 
+			 * @Override public void onAutoFocus(boolean success, Camera camera)
+			 * { // 从Camera捕获图片 camera.takePicture(null, null, new
+			 * PhotoHandler(getApplicationContext())); // 上传图片 new Thread(new
+			 * Runnable() {
+			 * 
+			 * @Override public void run() { try { upLoadByHttpClient4(); }
+			 * catch (ClientProtocolException e) { e.printStackTrace(); } catch
+			 * (IOException e) { e.printStackTrace(); } } }).start(); } }); }
+			 * 
+			 * } }
+			 */
 		}
 	};
 

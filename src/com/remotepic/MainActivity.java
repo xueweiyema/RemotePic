@@ -80,15 +80,18 @@ public class MainActivity extends Activity {
 	public void click(View v) {
 		int key = v.getId();
 		switch (key) {
+		
 		case R.id.button1:
 			startMyService();
 			doBindService();
 			break;
+			
 		case R.id.button2:
 			Intent stopIntent = new Intent(this, LocalService.class);
 			stopService(stopIntent);
 			doUnbindService();
 			break;
+			
 		case R.id.button3:
 			new Thread(new Runnable() {
 				@Override
@@ -104,8 +107,8 @@ public class MainActivity extends Activity {
 					}
 				}
 			}).start();
-
 			break;
+			
 		case R.id.button4:
 			this.finish();
 			break;

@@ -6,5 +6,17 @@
     <string name="hello_world">Hello world!</string>
     <string name="local_service_started">服务开始</string>
     <string name="local_service_stopped">服务停止</string>
+    <string name="picture">Picture</string>
+    <string name="description_info">Info</string>
+    <string name="intro_message">
+<![CDATA[
+        
+            
+            This sample demonstrates the basic use of Camera2 API. Check the source code to see how
+            you can display camera preview and take pictures.
+            
+        
+        ]]>
+    </string>
 
 </resources>
